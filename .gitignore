@@ -1,0 +1,12 @@
+
+__pycache__/
+*.pyc
+
+*.xlsx
+*.xls
+*.csv
+
+*_TotalGHGEmissions.xlsx
+
+.DS_Store
+Thumbs.db
