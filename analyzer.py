@@ -176,15 +176,26 @@ def select_source(approver_df: pd.DataFrame, bill_entry_df: pd.DataFrame) -> pd.
 # --------------------------------------------------------------------------- #
  
 def build_totals_by_building(df: pd.DataFrame) -> pd.DataFrame:
-    """Totalize kWh, Therms, and water (converted to CCF) per building (Facility)."""
+    """Totalize kWh, Therms, and water (converted to CCF) per building.
+ 
+    Grouped by the facility CODE (the number before the dash in Facility),
+    not the full Facility text - the same building sometimes has a
+    differently spelled/abbreviated name between the two source files
+    (e.g. "00001-Old Admininstration Bldg." vs "00001-Old Administration
+    Bldg."), which would otherwise split one building into two rows.
+    """
     d = df.copy()
     d[["Consumption Value", "Consumption Unit"]] = d["Consumption"].apply(
         lambda v: pd.Series(parse_consumption(v))
     )
     d["unit_lower"] = d["Consumption Unit"].str.lower()
+    d["Facility Code"] = d["Facility"].astype(str).str.split("-").str[0].str.strip()
  
     rows = []
-    for facility, grp in d.groupby("Facility"):
+    for code, grp in d.groupby("Facility Code"):
+        # use whichever full Facility name is most common for this code
+        facility_name = grp["Facility"].mode().iat[0]
+ 
         kwh_total = grp.loc[grp["unit_lower"].isin(ELECTRIC_UNITS), "Consumption Value"].sum()
         therms_total = grp.loc[grp["unit_lower"].isin(GAS_UNITS), "Consumption Value"].sum()
  
@@ -200,7 +211,7 @@ def build_totals_by_building(df: pd.DataFrame) -> pd.DataFrame:
             water_unit_breakdown.append(f"{round(native_total, 2)} {unit_key}")
  
         rows.append({
-            "Facility": facility,
+            "Facility": facility_name,
             "Total kWh": round(kwh_total, 2) if kwh_total else 0,
             "Total Therms": round(therms_total, 2) if therms_total else 0,
             "Water Unit(s)": "; ".join(water_unit_breakdown) if water_unit_breakdown else None,
@@ -320,3 +331,4 @@ def main():
  
 if __name__ == "__main__":
     main()
+ 
