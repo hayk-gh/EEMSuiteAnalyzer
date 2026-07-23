@@ -2,7 +2,6 @@ from __future__ import annotations
 import re
 import sys
 from pathlib import Path
-
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill
@@ -10,7 +9,7 @@ from openpyxl.utils import get_column_letter
 
 # Configuration
 
-TARGET_YEAR = 2025          # "Focus on 2025"
+TARGET_YEAR = 2025          # Focus on 2025
 CUTOFF_DAY = 17              # bills dated after this day roll to the next month
 DUP_KEY = ["Facility", "Account Number", "Meter Number", "Service From", "Service To"]
 
@@ -199,7 +198,7 @@ def write_workbook(raw_df: pd.DataFrame, normalized_df: pd.DataFrame, totals_df:
 
 def main():
     print("=" * 60)
-    print("Bill Normalizer")
+    print("Bill Analyzer")
     print("=" * 60)
     while True:
         file_input = input("\nEnter the name (or path) of the file to normalize: ").strip().strip('"')

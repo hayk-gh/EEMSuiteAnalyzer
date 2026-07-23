@@ -6,7 +6,7 @@ use for every building.
 
 ## What you need before you start
 
-1. Python installed on your computer (ask IT if you're not sure it's there).
+1. Python installed on your computer.
 2. The two files you'll be entering: your Approver file and your Bill Entry
    file. They can be named anything — the program will figure out which is
    which by what you type in.
